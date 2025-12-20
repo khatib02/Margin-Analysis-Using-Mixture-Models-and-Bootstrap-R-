@@ -1,3 +1,7 @@
+![R](https://img.shields.io/badge/R-4.3.1-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+
 # Superstore Profit Margin Analysis
 
 ## Overview
@@ -28,3 +32,5 @@ It contains sales data including sales amount, category of products, customer, d
 - The model revealed two distinct distributions: one corresponding to a negative expected margin and the other to a positive expected margin.
 - The cluster associated with a negative margin is primarily linked to discounts of 30%–40% and 50%–70%, as well as products such as furniture, bookcases, machines, and supplies.
 - The cluster associated with a positive margin is mainly related to office supplies, art, and phones.
+
+
