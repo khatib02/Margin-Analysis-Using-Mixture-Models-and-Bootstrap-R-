@@ -5,85 +5,108 @@
 ![Focus](https://img.shields.io/badge/Focus-Statistical%20Inference-orange)
 
 ## Executive Summary
-This project presents an end-to-end statistical analysis of a retail transaction dataset. Unlike standard machine learning approaches that prioritize "black-box" predictive accuracy, this analysis focuses on **structural interpretability**, **robustness**, and **statistical soundness**.
+I analyzed a superstore transaction dataset to understand profit margins. I avoided "black-box" machine learning methods that only focus on prediction. Instead, I built a model that emphasizes **structure** and **reliability**.
 
 **Key Outcome:**
-The final model identifies **two distinct latent economic regimes (clusters)** within the transactions, allowing the business to separate high-risk/low-margin orders from stable high-performance transactions. This was achieved using a **Finite Mixture of Gaussian Linear Regressions**, selected after rigorously comparing Generalized Additive Models (GAMLSS) and Gradient Boosting methods.
+The final model identifies **two distinct economic groups (clusters)** within the data. This helps the business separate high-risk orders from stable, high-performance ones. I achieved this using a **Finite Mixture of Gaussian Linear Regressions**, chosen after comparing it with Generalized Additive Models (GAMLSS) and Gradient Boosting.
 
 ---
 
 ## Business Problem
-Retail transaction data is characterized by high complexity: time effects, geographic heterogeneity, and highly skewed financial variables. The objective was to determine which factors drive **Profit Margins** defined as:
+Retail data is complex. It involves time effects, location differences, and skewed financial numbers. My goal was to find the factors that drive **Profit Margins**:
 
 $$\text{Margin} = \frac{\text{Profit}}{\text{Sales}}$$
 
 **Goals:**
-* Construct an analytically coherent dataset.
-* Balance predictive stability with business interpretability.
-* Provide actionable insights on profitability drivers.
+* Build a clean, consistent dataset.
+* Balance stable predictions with business meaning.
+* Find practical drivers of profit.
 
 ---
 
 ## Methodology & Technical Approach
 
-The workflow was implemented in **R**, combining classical statistical reasoning with modern machine learning tools.
+I used **R** for the entire workflow. I combined standard statistical reasoning with modern tools.
 
-### 1. Data Engineering & Rigorous Cleaning
-* **Decomposition:** Broken down complex identifiers (Order ID, Product ID) to remove redundancy using string functions.
-* **Dimensionality Reduction:** Aggregated rare geographic categories into census-level divisions to reduce noise.
-* **Data type modifications:** Variables were explicitly cast to appropriate data types based on their semantic meaning and analytical role.
+### 1. Data Engineering & Cleaning
+* **Decomposition:** I broke down complex Order and Product IDs to remove repetition.
+* **Dimensionality Reduction:** I grouped rare locations into larger census divisions to reduce noise.
+* **Data Types:** I set specific data types for all variables based on their analytical role.
 
 ### 2. Model Selection Journey
-I evaluated a sequence of increasingly flexible models to understand the distributional structure of the data:
+I tested a sequence of models to understand the data structure:
 
 | Model Type | Purpose | Finding |
 | :--- | :--- | :--- |
-| **Baseline Linear (Lasso/Ridge)** | Reference point | Residuals showed heavy tails; Gaussian assumption failed. |
-| **GAMLSS (Student-t)** | Handle heavy tails | Improved fit, but residuals showed bimodality. |
-| **Tree-Based (XGBoost/LightGBM)** | Maximize prediction | High accuracy, but low interpretability for specific transaction drivers. |
-| **Finite Mixture Model (Final)** | **Capture heterogeneity** | Successfully modeled two latent subpopulations with distinct risk profiles. |
+| **Baseline Linear (Lasso/Ridge)** | Reference point | Residuals had heavy tails. The Gaussian assumption failed. |
+| **GAMLSS (Student-t)** | Handle heavy tails | Fit improved, but residuals showed two peaks (bimodality). |
+| **Tree-Based (XGBoost/LightGBM)** | Maximize prediction | Accuracy was high, but the drivers were hard to explain. |
+| **Finite Mixture Model (Final)** | **Capture heterogeneity** | Modeled the two latent groups with distinct risk profiles. Model with the highest accuracy and intepretability |
 
 ---
 
 ## Key Findings: The "Two-Cluster" Discovery
 
-The Finite Mixture Model revealed that transactions naturally fall into two clusters, which provides a direct link to business risk assessment:
+The Finite Mixture Model shows that transactions fall into two groups. This links directly to business risk:
 
-* **Cluster 1 (High Risk):** Characterized by lower average margins and a high probability of negative outcomes (losses).
-* **Cluster 2 (High Performance):** Exhibits substantially higher expected margins and lower downside risk.
+* **Cluster 1 (High Risk):** Has lower average margins and a high chance of loss.
+* **Cluster 2 (High Performance):** Shows higher expected margins and low risk.
 
-<img width="1723" height="1069" alt="image" src="https://github.com/user-attachments/assets/ae155bbb-7521-4417-9c84-5075740c9566" />
+<img width="1530" height="1350" alt="image" src="https://github.com/user-attachments/assets/a5e49e1f-9626-4335-a656-da1c601d3495" />
 
-> *Figure: Risk-Return trade-off between the two identified clusters.*
+> *Figure: Risk-Return trade-off. Cluster 2 (right) shows higher expected margin and lower probability of negative margin compared to Cluster 1 (left).*
 
 ### Drivers of Profitability
-Using a concomitant model, we identified the structural drivers that increase the odds of a transaction belonging to the "High Performance" cluster. This allows for strategic decision-making, such as adjusting discount strategies for specific order profiles.
+I used a concomitant model to find what puts a transaction in the "High Performance" cluster. This helps with decisions like setting discount rates or changing shipping strategies.
+
+<img width="1530" height="1350" alt="image" src="https://github.com/user-attachments/assets/d2cfe6df-1e74-463e-9f5a-f202b0a6645b" />
+
+> *Figure: Operational drivers (e.g., Discount, Sub-Category, Shipping Mode) that most strongly influence the probability of high-performance classification.*
 
 ---
 
 ## Advanced Statistical Validation
 
-To ensure the model wasn't just "fitting noise," I performed rigorous stability checks rarely seen in standard analyses:
+I ran stability checks to prove the model works reliably.
 
-1.  **Convergence Analysis:** Tested the EM algorithm stability across varying numbers of random initializations ($n_{rep}$). Results showed the solution stabilizes at $n_{rep} \approx 20$.
-2.  **Nonparametric Bootstrap ($B=1000$):**
-    * Implemented parallelized bootstrap refitting to assess generalization.
-    * Constructed empirical confidence intervals for cluster-specific expected margins.
-    * Confirmed that the clusters correspond to genuinely different distributions, not statistical artifacts.
+### 1. Diagnostic Robustness
+Comparing the residuals of the baseline linear model against the mixture model highlights the necessity of the chosen approach.
+
+<img width="1530" height="1350" alt="image" src="https://github.com/user-attachments/assets/d7c83df4-82e9-4a70-8e0d-146c371fc4f6" />
+
+> *Figure: The Linear Model (Left) fails to capture extreme tails. The Mixture Model (Right) adheres more closely to the theoretical distribution.*
+
+### 2. Convergence & Bootstrap Analysis
+* **Convergence Analysis:** I tested the EM algorithm stability. The solution becomes stable after about 20 random starts ($n_{rep} \approx 20$).
+* **Nonparametric Bootstrap ($B=1000$):**
+    * I re-ran the model 1000 times on resampled data.
+    * I built confidence intervals for the expected margins of each cluster.
+    * This confirmed the clusters are real and not just statistical noise.
+
+<img width="1530" height="1350" alt="image" src="https://github.com/user-attachments/assets/9dfbd59b-5bec-4e46-861d-c75ad4a9ab53" />
+
+> *Figure: Bootstrap distributions of RMSE and predictive $R^2$ showing stable out-of-sample performance.*
 
 ---
 
 ## Tech Stack
 * **Language:** R
-* **Data Manipulation:** `dplyr`, `tidyr`, `purrr`.
-* **Visualization:** `ggplot2`.
-* **Modeling:** `flexmix` (Mixture Models), `gamlss`, `xgboost`, `lightgbm`, `glmnet`.
-* **Parallel Computing:** `foreach`, `doParallel`.
+* **Data Manipulation:** `tidyr`
+* **Visualization:** `ggplot2`
+* **Modeling:** `flexmix` (Mixture Models), `gamlss`, `xgboost`, `lightgbm`, `glmnet`
+* **Parallel Computing:** `foreach`, `doParallel`
 
 ---
 
-## 🚀 Conclusion
-The final Gaussian Mixture Model represents a robust compromise between statistical rigor and business relevance. It moves beyond simple point predictions to provide a probabilistic understanding of operational risk, enabling data-driven policy adjustments.
+## Conclusion
+The final Gaussian Mixture Model balances statistical rigor with business needs. It provides a clear view of operational risk and supports better decision-making.
 
-<img width="596" height="188" alt="image" src="https://github.com/user-attachments/assets/b56a8bf8-65a1-4b43-ae71-9bfe736fecd1" />
+<img width="1194" height="377" alt="image" src="https://github.com/user-attachments/assets/8040159c-84da-40f7-9e23-a854cd3a58be" />
+
+
+> *Out-of-sample performance metrics sorted by descending predictive $R^2$. While boosting methods (XGBoost/LightGBM) achieved high raw accuracy, the Gaussian Mixture Model achieved the highest accuracy and interpretability of the bussiness model*
+
+
+
+
 
