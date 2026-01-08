@@ -85,7 +85,7 @@ Comparing the residuals of the baseline linear model against the mixture model h
 
 <img width="1530" height="1350" alt="image" src="https://github.com/user-attachments/assets/9dfbd59b-5bec-4e46-861d-c75ad4a9ab53" />
 
-> *Figure: Bootstrap distributions of RMSE and predictive $R^2$ showing stable out-of-sample performance.*
+> *Figure: Bootstrap distributions of RMSE and predictive R<sup>2</sup> showing stable out-of-sample performance.*
 
 ---
 
@@ -104,7 +104,7 @@ The final Gaussian Mixture Model balances statistical rigor with business needs.
 <img width="1194" height="377" alt="image" src="https://github.com/user-attachments/assets/8040159c-84da-40f7-9e23-a854cd3a58be" />
 
 
-> *Out-of-sample performance metrics sorted by descending predictive $R^2$. While boosting methods (XGBoost/LightGBM) achieved high raw accuracy, the Gaussian Mixture Model achieved the highest accuracy and interpretability of the bussiness model*
+> *Out-of-sample performance metrics sorted by descending predictive R². While boosting methods (XGBoost/LightGBM) achieved high raw accuracy, the Gaussian Mixture Model achieved the highest accuracy and interpretability of the bussiness model*
 
 
 
